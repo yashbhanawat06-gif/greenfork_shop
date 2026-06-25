@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GreenFork - Dine Naturally. Live Responsibly.</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="https://couragefoundation.eu/wp-content/uploads/2022/09/logo-GreenFork.jpg" width="75" alt="GreenFork Logo">
+        <h1>GreenFork</h1>
+        <div class="tagline">Dine Naturally. Live Responsibly.</div>
+        <div class="eco-badge">Crafted from nature, designed for you!</div>
+        <nav>
+            <a href="#store" onclick="gotoShop()">Shop Now</a>
+            <a href="cart.html" class="cart-link">🛒 Cart <span id="cartCount">0</span></a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Nature’s Best Utensils</h2>
+            <div class="tagline">“Chic and Eco. Designed to Sustain.”</div>
+            <p>
+                Switch to planet-loving wooden forks, spoons and knives for a cleaner, greener table.<br>
+                <span class="eco-badge">Plastic-Free · Compostable · Stylishly Sustainable</span>
+            </p>
+            <img src="https://tse4.mm.bing.net/th/id/OIP.Zq4eRkSQiGqqy5H76Ukd1wHaGS?pid=Api&P=0&h=180" width="300" alt="Nature Image">
+        </section>
+        <section id="store" style="margin-top:3rem;">
+            <h2>Shop Our Wooden Cutlery</h2>
+            <div class="products">
+                <div class="product" data-id="1" data-name="Family Pack Set (50 forks and 50 spoons)" data-price="449" data-img="https://images.unsplash.com/photo-1728034261662-460ca4fbecd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg">
+                    <img src="https://images.unsplash.com/photo-1728034261662-460ca4fbecd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg" width="120" alt="Family Pack">
+                    <div>Family Pack Set (50 forks and 50 spoons)</div>
+                    <div class="price">₹449</div>
+                    <button class="cart-btn" onclick="openQtyModal(1)">Add to Cart</button>
+                </div>
+                <div class="product" data-id="2" data-name="Artisan Collection (Handcrafted Premium Set)" data-price="899" data-img="https://images.unsplash.com/photo-1758810742974-b92459867642?crop=entropy&cs=tinysrgb&fit=max&fm=jpg">
+                    <img src="https://images.unsplash.com/photo-1758810742974-b92459867642?crop=entropy&cs=tinysrgb&fit=max&fm=jpg" width="120" alt="Artisan Collection">
+                    <div>Artisan Collection (Handcrafted Premium Set)</div>
+                    <div class="price">₹899</div>
+                    <button class="cart-btn" onclick="openQtyModal(2)">Add to Cart</button>
+                </div>
+                <div class="product" data-id="3" data-name="Professional Set (Restaurant Grade Set)" data-price="1499" data-img="https://images.unsplash.com/photo-1678097337297-beeb71aad55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg">
+                    <img src="https://images.unsplash.com/photo-1678097337297-beeb71aad55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg" width="120" alt="Professional Set">
+                    <div>Professional Set (Restaurant Grade Set)</div>
+                    <div class="price">₹1499</div>
+                    <button class="cart-btn" onclick="openQtyModal(3)">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Quantity Modal -->
+    <div id="qtyModal" class="modal">
+        <div class="modal-content">
+            <span id="modalProductName" class="modal-title"></span>
+            <div class="qty-selector">
+                <button onclick="changeQty(-1)">-</button>
+                <span id="modalQty">1</span>
+                <button onclick="changeQty(1)">+</button>
+            </div>
+            <button onclick="confirmAddToCart()">Add to Cart</button>
+            <button onclick="closeQtyModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Small popup notification -->
+    <div id="smallPopup" class="small-popup"></div>
+
+    <footer>
+        <span class="eco-badge">“Simple. Stylish. Sustainable.”</span><br>
+        &copy; 2025 GreenFork. Join the Green Revolution!
+    </footer>
+    <script>
+        function gotoShop() {
+            document.getElementById('store').scrollIntoView({behavior: 'smooth'});
+        }
+
+        const products = [
+            {id: 1, name: "Family Pack Set (50 forks and 50 spoons)", price: 449, img: "https://images.unsplash.com/photo-1728034261662-460ca4fbecd7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg"},
+            {id: 2, name: "Artisan Collection (Handcrafted Premium Set)", price: 899, img: "https://images.unsplash.com/photo-1758810742974-b92459867642?crop=entropy&cs=tinysrgb&fit=max&fm=jpg"},
+            {id: 3, name: "Professional Set (Restaurant Grade Set)", price: 1499, img: "https://images.unsplash.com/photo-1678097337297-beeb71aad55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg"}
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        let selectedProduct = null;
+        let selectedQty = 1;
+
+        function updateCartCount() {
+            const countElem = document.getElementById('cartCount');
+            countElem.innerText = cart.reduce((total, item) => total + item.qty, 0);
+        }
+        updateCartCount();
+
+        function openQtyModal(id) {
+            selectedProduct = products.find(p => p.id === id);
+            selectedQty = 1;
+            document.getElementById('modalProductName').innerText = selectedProduct.name;
+            document.getElementById('modalQty').innerText = selectedQty;
+            document.getElementById('qtyModal').style.display = 'flex';
+        }
+        function changeQty(delta) {
+            selectedQty = Math.max(1, selectedQty + delta);
+            document.getElementById('modalQty').innerText = selectedQty;
+        }
+        function closeQtyModal() {
+            document.getElementById('qtyModal').style.display = 'none';
+        }
+
+        function showSmallPopup(message) {
+            const popup = document.getElementById('smallPopup');
+            popup.innerText = message;
+            popup.style.opacity = '1';
+            popup.style.transform = "translateY(0)";
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                popup.style.transform = "translateY(-20px)";
+            }, 2000);
+        }
+
+        function confirmAddToCart() {
+            let found = cart.find(item => item.id === selectedProduct.id);
+            if(found) {
+                found.qty += selectedQty;
+            } else {
+                cart.push({...selectedProduct, qty: selectedQty});
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            closeQtyModal();
+            showSmallPopup("Added to cart!");
+        }
+    </script>
+</body>
+</html>

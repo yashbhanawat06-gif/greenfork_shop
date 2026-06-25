@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GreenFork - Your Cart</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="https://couragefoundation.eu/wp-content/uploads/2022/09/logo-GreenFork.jpg" width="75" alt="GreenFork Logo">
+        <h1>GreenFork</h1>
+        <div class="tagline">Dine Naturally. Live Responsibly.</div>
+        <div class="eco-badge">Crafted from nature, designed for you!</div>
+        <nav>
+            <a href="index.html">Back to Shop</a>
+        </nav>
+    </header>
+    <main>
+        <section id="cartSection">
+            <h2>Your Cart</h2>
+            <div id="cartItems"></div>
+            <button id="purchaseBtn" onclick="purchaseCart()">Purchase</button>
+        </section>
+    </main>
+
+    <!-- Small popup notification -->
+    <div id="smallPopup" class="small-popup"></div>
+
+    <footer>
+        <span class="eco-badge">“Simple. Stylish. Sustainable.”</span><br>
+        &copy; 2025 GreenFork. Join the Green Revolution!
+    </footer>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            container.innerHTML = '';
+            if(cart.length === 0) {
+                container.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('purchaseBtn').style.display = 'none';
+                return;
+            }
+            document.getElementById('purchaseBtn').style.display = 'block';
+
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cartItem';
+
+                itemDiv.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="cartItemName">${item.name}</div>
+                    <div class="cartQtyControls">
+                        <button onclick="changeQty(${item.id}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeQty(${item.id}, 1)">+</button>
+                    </div>
+                    <div class="cartItemPrice">₹${item.price * item.qty}</div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function changeQty(id, delta) {
+            const index = cart.findIndex(item => item.id === id);
+            if(index > -1) {
+                cart[index].qty += delta;
+                if(cart[index].qty < 1) {
+                    cart.splice(index, 1);
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        function showSmallPopup(message) {
+            const popup = document.getElementById('smallPopup');
+            popup.innerText = message;
+            popup.style.opacity = '1';
+            popup.style.transform = "translateY(0)";
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                popup.style.transform = "translateY(-20px)";
+            }, 2000);
+        }
+
+        function purchaseCart() {
+            if(cart.length === 0) {
+                showSmallPopup("Your cart is empty!");
+                return;
+            }
+            showSmallPopup("Thank you for your purchase!");
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        window.onload = renderCart;
+    </script>
+</body>
+</html>
